@@ -1,94 +1,109 @@
 # Excel MCP Server
 
-一个基于FastMCP框架的Excel文件处理MCP服务器，提供Excel文件读取和处理功能。
+一个基于FastMCP框架的Excel文件处理MCP服务器，为Cline、Cursor等支持MCP协议的工具提供Excel文件读取、搜索、编辑等功能。
 
-## 功能特性
+## ⚠️ 重要说明
 
-- 📊 支持读取Excel文件（.xlsx和.xls格式）
-- 🔧 基于FastMCP框架构建
-- 📋 支持指定工作表读取
-- 🚀 高性能数据处理
-- 🛡️ 完善的错误处理机制
+**本项目目前只在Windows环境下进行过测试，其他操作系统的兼容性未经验证。**
 
-## 安装依赖
+## 系统要求
 
-```bash
-pip install -r requirements.txt
-```
+- **操作系统**: Windows 10/11
+- **Python版本**: 3.8 或更高版本
+- **网络连接**: 安装过程需要下载Python依赖包
 
-## 使用方法
+## 安装步骤
 
-### 启动服务器
+### 1. 克隆项目并进入目录
 
 ```bash
-python server.py
+git clone <项目地址>
+cd excel-mcp-server
 ```
 
-### 可用工具
+### 2. 运行自动安装脚本
 
-#### read_excel_file
+双击运行 `setup_mcp_config.bat` 文件，或在命令行中执行：
 
-读取指定的Excel文件并返回结构化数据。
+```cmd
+setup_mcp_config.bat
+```
 
-**参数：**
-- `file_path` (必需): Excel文件的完整路径
-- `sheet_name` (可选): 要读取的工作表名称，默认读取第一个工作表
-- `max_rows` (可选): 最大读取行数，默认1000行
+该脚本将自动完成以下操作：
+- ✅ 检查Python环境
+- 📦 安装项目依赖
+- ⚙️ 生成MCP配置文件 (`mcp_config.json`)
+- 🧪 验证服务器可用性
 
-**返回格式：**
+## 配置MCP客户端
+
+安装完成后，将生成的 `mcp_config.json` 文件内容复制到您使用的MCP客户端配置中：
+
+### Cline (VSCode扩展)
+1. 打开VSCode设置
+2. 搜索"Cline MCP"
+3. 将配置内容添加到MCP服务器配置中
+
+### Cursor
+1. 打开Cursor设置
+2. 找到MCP配置选项
+3. 添加生成的配置内容
+
+### 其他MCP客户端
+参考各客户端的MCP配置文档，将 `mcp_config.json` 中的配置添加到相应位置。
+
+## 配置文件示例
+
+生成的配置文件格式如下：
+
 ```json
 {
-  "success": true,
-  "error": null,
-  "data": {
-    "file_path": "文件路径",
-    "current_sheet": "当前工作表名称",
-    "available_sheets": ["可用工作表列表"],
-    "total_rows": 100,
-    "total_columns": 5,
-    "columns": ["列名列表"],
-    "records": [{"数据记录"}],
-    "max_rows_limit": 1000,
-    "truncated": false
+  "mcpServers": {
+    "excel-mcp-server": {
+      "command": "C:\\Python\\python.exe",
+      "args": ["C:\\path\\to\\excel-mcp-server\\server.py"],
+      "env": {}
+    }
   }
 }
 ```
 
-## 项目结构
+## 验证安装
 
+配置完成后，重启您的MCP客户端，应该能看到以下Excel处理工具：
+
+- `read_excel_file` - 读取Excel文件数据
+- `get_excel_summary` - 获取Excel文件概览
+- `search_excel_data` - 搜索Excel数据
+- `insert_excel_row` - 插入Excel行数据
+
+## 故障排除
+
+### 常见问题
+
+**Q: 运行bat文件时提示"未找到Python"**
+A: 请确保已安装Python 3.8+并添加到系统PATH环境变量中
+
+**Q: 依赖安装失败**
+A: 检查网络连接，或尝试使用国内pip镜像源
+
+**Q: MCP客户端无法连接服务器**
+A: 确认配置文件路径正确，且Python解释器路径有效
+
+### 手动测试服务器
+
+如需手动测试服务器是否正常工作：
+
+```cmd
+python server.py
 ```
-excel-mcp-server/
-├── server.py              # 主服务器文件
-├── tools/                 # 工具模块目录
-│   ├── __init__.py        # 模块初始化文件
-│   └── read_excel_file.py # Excel文件读取工具
-├── requirements.txt       # 项目依赖
-└── README.md             # 项目说明文档
-```
 
-## 技术栈
-
-- **FastMCP**: MCP服务器框架
-- **Pandas**: 数据处理库
-- **OpenPyXL**: Excel文件处理
-- **Pydantic**: 数据验证
-
-## 开发说明
-
-### 添加新工具
-
-1. 在`tools/`目录下创建新的工具文件
-2. 在`tools/__init__.py`中导入新工具
-3. 在`server.py`中注册新工具
-
-### 日志配置
-
-项目使用Python标准logging模块，日志级别设置为INFO。
+服务器启动成功会显示相关日志信息。
 
 ## 许可证
 
 MIT License
 
-## 贡献
+---
 
-欢迎提交Issue和Pull Request来改进这个项目。
+💡 **提示**: 如果在使用过程中遇到问题，请检查Python版本、网络连接和文件路径是否正确。
