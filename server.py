@@ -22,5 +22,4 @@ mcp.tool()(read_excel_file)
 
 if __name__ == "__main__":
     logger.info("[Setup] Initializing Excel MCP Server...")
-    print("test")
     mcp.run()
