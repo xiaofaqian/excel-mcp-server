@@ -21,14 +21,33 @@ def read_excel_file(
         description="要读取的工作表名称。如果不指定，将读取第一个工作表"
     )] = None,
     max_rows: Annotated[int, Field(
-        default=1000,
-        description="最大读取行数，防止大文件导致性能问题。默认 1000 行"
-    )] = 1000
+        default=20,
+        description="最大读取行数，防止大文件导致性能问题。默认 20 行，最多不能超过 100 行"
+    )] = 20
 ) -> Dict[str, Any]:
     """读取指定的 Excel 文件并返回结构化数据"""
     logger.info(f"[Tool] read_excel_file called with file_path: {file_path}, sheet_name: {sheet_name}, max_rows: {max_rows}")
     
     try:
+        # 验证 max_rows 参数
+        if max_rows > 100:
+            error_msg = f"max_rows 参数不能超过 100，当前值: {max_rows}"
+            logger.error(f"[Error] {error_msg}")
+            return {
+                "success": False,
+                "error": error_msg,
+                "data": None
+            }
+        
+        if max_rows <= 0:
+            error_msg = f"max_rows 参数必须大于 0，当前值: {max_rows}"
+            logger.error(f"[Error] {error_msg}")
+            return {
+                "success": False,
+                "error": error_msg,
+                "data": None
+            }
+        
         # 验证文件路径
         if not os.path.exists(file_path):
             error_msg = f"文件不存在: {file_path}"
