@@ -106,10 +106,15 @@ def read_excel_file(
         # 转换数据为 JSON 格式
         data_dict = df.to_dict('records')
         
-        # 处理 NaN 值
-        for record in data_dict:
+        # 处理 NaN 值并添加行号
+        for i, record in enumerate(data_dict):
+            # 添加行号（考虑start_row偏移量，Excel行号从1开始，但还要考虑可能的标题行）
+            # 实际Excel行号 = start_row + 当前索引 + 1（因为skiprows已经跳过了start_row行）
+            record['row_number'] = start_row + i + 1
+            
+            # 处理NaN值
             for key, value in record.items():
-                if pd.isna(value):
+                if key != 'row_number' and pd.isna(value):
                     record[key] = None
         
         result = {
